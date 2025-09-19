@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2022-2024 The Pybricks Authors
 
+// eslint-disable-next-line import/no-named-as-default
 import Dexie from 'dexie';
 import {
     call,

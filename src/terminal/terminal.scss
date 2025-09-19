@@ -2,6 +2,7 @@
 // Copyright (c) 2022-2023 The Pybricks Authors
 
 @use '@blueprintjs/core/lib/scss/variables' as bp;
+@use 'sass:color';
 
 .pb-terminal-bell-overlay {
     position: absolute;
@@ -13,7 +14,7 @@
     pointer-events: none;
 
     &.pb-bell {
-        background-color: adjust-color(bp.$pt-intent-danger, $alpha: -0.5);
+        background-color: color.adjust(bp.$pt-intent-danger, $alpha: -0.5);
         transition: linear 100ms;
     }
 }

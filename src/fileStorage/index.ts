@@ -2,7 +2,9 @@
 // Copyright (c) 2022 The Pybricks Authors
 
 import 'dexie-observable';
-import Dexie, { Table } from 'dexie';
+// eslint-disable-next-line import/no-named-as-default
+import Dexie from 'dexie';
+import type { Table } from 'dexie';
 import type * as monaco from 'monaco-editor';
 
 /** Type to avoid mixing UUID with regular string. */
