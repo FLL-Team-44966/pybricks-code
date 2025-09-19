@@ -89,8 +89,7 @@ export const zipFileExtension = '.zip';
 export const zipFileMimeType = 'application/zip';
 
 /** Google Cloud API key */
-export const googleApiKey = 'AIzaSyBMKnuqNI3N0r95XNns1tT7TYJHGkM5juU';
+export const googleApiKey = process.env.REACT_APP_GOOGLE_API_KEY;
 
 /** Google OAuth 2.0 Client ID */
-export const googleClientId =
-    '1034337501504-of3um354h2dsdm200bhjnfpk6cg0m0n6.apps.googleusercontent.com';
+export const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
