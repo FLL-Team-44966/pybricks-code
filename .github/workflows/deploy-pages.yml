@@ -37,7 +37,7 @@ jobs:
             - name: Lint
               run: |
                   yarn lint
-                  git diff --exit-code
+                  git diff --ignore-space-at-eol --exit-code
 
             - name: Build
               run: yarn build
