@@ -142,7 +142,7 @@
         "predeploy": "npm run build",
         "deploy": "gh-pages -d build"
     },
-    "homepage": "https://scatwang.github.io/pybricks-code",
+    "homepage": "https://mcsnolte.github.io/pybricks-code",
     "eslintConfig": {
         "extends": "react-app"
     },
