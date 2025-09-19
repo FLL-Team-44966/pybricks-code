@@ -204,7 +204,11 @@ const RenameInput: React.FunctionComponent<RenderProps<'renderRenameInput'>> = (
         <span className={Classes.TREE_NODE_SECONDARY_LABEL}>
             <Button
                 icon={<Tick />}
-                {...props.submitButtonProps}
+                {...(() => {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+                    const { size, ...rest } = props.submitButtonProps || {};
+                    return rest;
+                })()}
                 ref={props.submitButtonRef}
                 type="submit"
                 minimal={true}

@@ -66,8 +66,10 @@ toDispose.push(
 
 // https://webpack.js.org/api/hot-module-replacement/
 // istanbul ignore if: only used for development
-if (module.hot) {
-    module.hot.dispose(() => {
+if ((module as unknown as { hot?: { dispose: (callback: () => void) => void } }).hot) {
+    (
+        module as unknown as { hot: { dispose: (callback: () => void) => void } }
+    ).hot.dispose(() => {
         toDispose.forEach((s) => s.dispose());
     });
 }
