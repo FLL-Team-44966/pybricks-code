@@ -31,7 +31,7 @@ export default function DownloadPicker() {
             clientId: googleClientId,
             developerKey: googleApiKey,
             viewId: 'DOCS',
-            viewMimeTypes: pythonFileMimeType,
+            // Remove viewMimeTypes restriction to show all files, filter on client side
             token: authToken,
             customScopes: ['https://www.googleapis.com/auth/drive'],
             setIncludeFolders: true,
@@ -41,10 +41,23 @@ export default function DownloadPicker() {
             callbackFunction: (data: PickerResponse) => {
                 console.log(data);
                 if (data.action === 'picked' && data.docs) {
-                    if (authToken) {
-                        dispatch(googleDriveDidSelectDownloadFiles(data.docs));
+                    // Filter to only include Python files and folders
+                    const filteredDocs = data.docs.filter(
+                        (doc) =>
+                            doc.mimeType === 'application/vnd.google-apps.folder' || // Include folders
+                            doc.name.endsWith('.py') || // Include .py files
+                            doc.mimeType === pythonFileMimeType || // Include files with correct MIME type
+                            doc.mimeType === '', // Include files where MIME type couldn't be determined
+                    );
+
+                    if (filteredDocs.length > 0) {
+                        if (authToken) {
+                            dispatch(googleDriveDidSelectDownloadFiles(filteredDocs));
+                        } else {
+                            setPickedDocs(filteredDocs);
+                        }
                     } else {
-                        setPickedDocs(data.docs);
+                        console.log('No Python files or folders selected.');
                     }
                 } else {
                     console.log('dialog cancelled, nothing happens.');
