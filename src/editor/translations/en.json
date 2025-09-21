@@ -16,5 +16,8 @@
     "docs": {
         "show": "Show documentation",
         "hide": "Hide documentation"
+    },
+    "cheatSheet": {
+        "show": "Open cheat sheet"
     }
 }

@@ -20,6 +20,7 @@ import {
     Blank,
     Clipboard,
     Cross,
+    DocumentCode,
     Duplicate,
     Manual,
     Redo,
@@ -534,6 +535,19 @@ const Editor: React.FunctionComponent = () => {
                         : i18n.translate('docs.show')
                 }
                 onClick={toggleIsSettingShowDocsEnabled}
+            />
+            <Button
+                className="pb-editor-cheat-sheet-button"
+                minimal
+                large
+                icon={<DocumentCode />}
+                title={i18n.translate('cheatSheet.show')}
+                onClick={() =>
+                    window.open(
+                        'https://github.com/FLL-Team-44966/pybricks/wiki/Cheat-Sheet',
+                        '_blank',
+                    )
+                }
             />
         </div>
     );
