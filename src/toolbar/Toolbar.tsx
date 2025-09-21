@@ -6,6 +6,7 @@ import React from 'react';
 import { useId } from 'react-aria';
 import { Toolbar as UtilsToolbar } from '../components/toolbar/Toolbar';
 import BluetoothButton from './buttons/bluetooth/BluetoothButton';
+import LogoButton from './buttons/logo/LogoButton';
 import ReplButton from './buttons/repl/ReplButton';
 import RunButton from './buttons/run/RunButton';
 import SponsorButton from './buttons/sponsor/SponsorButton';
@@ -16,6 +17,7 @@ import './toolbar.scss';
 
 // matches ID in tour component
 const bluetoothButtonId = 'pb-toolbar-bluetooth-button';
+const logoButtonId = 'pb-toolbar-logo-button';
 const runButtonId = 'pb-toolbar-run-button';
 const sponsorButtonId = 'pb-toolbar-sponsor-button';
 
@@ -28,7 +30,7 @@ const Toolbar: React.FunctionComponent = () => {
         <UtilsToolbar
             aria-label={i18n.translate('label')}
             className="pb-toolbar"
-            firstFocusableItemId={bluetoothButtonId}
+            firstFocusableItemId={logoButtonId}
         >
             <ButtonGroup className="pb-toolbar-group pb-align-left">
                 <BluetoothButton id={bluetoothButtonId} />
@@ -39,6 +41,7 @@ const Toolbar: React.FunctionComponent = () => {
                 <ReplButton id={replButtonId} />
             </ButtonGroup>
             <ButtonGroup className="pb-toolbar-group pb-align-right">
+                <LogoButton id={logoButtonId} />
                 <SponsorButton id={sponsorButtonId} />
             </ButtonGroup>
         </UtilsToolbar>
