@@ -26,6 +26,9 @@ declare global {
                     DOCS: string;
                     RECENTLY_PICKED: string;
                 };
+                Feature: {
+                    MULTISELECT_ENABLED: string;
+                };
                 DocsView: new (viewId: string) => DocsView;
             };
         };
@@ -38,7 +41,7 @@ interface PickerBuilder {
     setDeveloperKey: (key: string) => PickerBuilder;
     setCallback: (callback: (data: PickerResponse) => void) => PickerBuilder;
     setOrigin: (origin: string) => PickerBuilder;
-    setMultiSelect: (enabled: boolean) => PickerBuilder;
+    enableFeature: (feature: string) => PickerBuilder;
     setSize: (width: number, height: number) => PickerBuilder;
     build: () => Picker;
 }
@@ -128,7 +131,7 @@ export function openNativeGooglePicker(callback: (data: PickerResponse) => void)
                 throw new Error('Google Picker API not available');
             }
 
-            const { PickerBuilder, ViewId, DocsView } = pickerApi;
+            const { PickerBuilder, ViewId, Feature, DocsView } = pickerApi;
 
             // Create My Drive view
             const myDriveView = new DocsView(ViewId.DOCS)
@@ -158,7 +161,7 @@ export function openNativeGooglePicker(callback: (data: PickerResponse) => void)
                 .setDeveloperKey(googleApiKey)
                 .setCallback(callback)
                 .setOrigin(window.location.origin)
-                .setMultiSelect(true)
+                .enableFeature(Feature.MULTISELECT_ENABLED)
                 .setSize(1200, 635)
                 .build();
 
