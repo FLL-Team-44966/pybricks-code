@@ -70,7 +70,7 @@ function loadGooglePickerAPI(): Promise<void> {
         }
 
         // Check if script is already being loaded
-        const existingScript = document.querySelector('script[src*="picker"]');
+        const existingScript = document.querySelector('script[src*="picker.js"]');
         if (existingScript) {
             // Wait for it to load (max 10 seconds)
             let attempts = 0;
@@ -88,28 +88,24 @@ function loadGooglePickerAPI(): Promise<void> {
             return;
         }
 
-        // Load the Google API script first
-        const apiScript = document.createElement('script');
-        apiScript.src = 'https://apis.google.com/js/api.js';
-        apiScript.onload = () => {
-            if (!window.gapi) {
-                reject(new Error('Failed to load Google API'));
-                return;
-            }
-            // Load the picker module
-            window.gapi.load('picker', {
-                callback: () => {
+        // Load the picker API directly via script tag
+        // The picker API needs to be loaded separately from the main API
+        const pickerScript = document.createElement('script');
+        pickerScript.src = 'https://apis.google.com/js/picker.js';
+        pickerScript.onload = () => {
+            // Wait a bit for the API to initialize
+            setTimeout(() => {
+                if (window.google?.picker) {
                     resolve();
-                },
-                onerror: () => {
-                    reject(new Error('Failed to load Google Picker module'));
-                },
-            });
+                } else {
+                    reject(new Error('Google Picker API loaded but not available'));
+                }
+            }, 100);
         };
-        apiScript.onerror = () => {
-            reject(new Error('Failed to load Google API script'));
+        pickerScript.onerror = () => {
+            reject(new Error('Failed to load Google Picker API script'));
         };
-        document.head.appendChild(apiScript);
+        document.head.appendChild(pickerScript);
     });
 }
 

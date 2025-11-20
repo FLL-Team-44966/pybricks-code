@@ -250,7 +250,8 @@ function* handleFetchFolderInfo(
 ): Generator {
     try {
         // Fetch folder metadata from Google Drive API
-        const url = `https://www.googleapis.com/drive/v3/files/${action.folderId}?fields=id,name,mimeType,modifiedTime,url`;
+        // Note: 'url' is not a valid field for files.get, we'll construct it from the ID
+        const url = `https://www.googleapis.com/drive/v3/files/${action.folderId}?fields=id,name,mimeType,modifiedTime`;
         const fetchFolderInfo = fetch(url, {
             headers: {
                 Authorization: 'Bearer ' + getStoredOauthToken(),
@@ -268,9 +269,10 @@ function* handleFetchFolderInfo(
                     name: string;
                     mimeType?: string;
                     modifiedTime?: string;
-                    url?: string;
                 }) => {
                     // Convert to DriveDocument format
+                    // Construct the URL from the folder ID
+                    const folderUrl = `https://drive.google.com/drive/folders/${folderData.id}`;
                     return {
                         description: '',
                         driveSuccess: true,
@@ -289,7 +291,7 @@ function* handleFetchFolderInfo(
                         serviceId: 'drive',
                         sizeBytes: 0,
                         type: 'folder',
-                        url: folderData.url || '',
+                        url: folderUrl,
                     } as DriveDocument;
                 },
             );
