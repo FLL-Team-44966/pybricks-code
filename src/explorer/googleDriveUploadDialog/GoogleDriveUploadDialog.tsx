@@ -10,8 +10,7 @@ import {
     InputGroup,
     Spinner,
 } from '@blueprintjs/core';
-import { useEffect } from 'react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { FolderPicker } from '../../googleDrive/GoogleDrive';
 import {
