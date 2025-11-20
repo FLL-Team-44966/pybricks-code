@@ -10,10 +10,15 @@ import {
     InputGroup,
     Spinner,
 } from '@blueprintjs/core';
+import { useEffect } from 'react';
 import React, { useCallback, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { FolderPicker } from '../../googleDrive/GoogleDrive';
-import { googleDriveUploadFile } from '../../googleDrive/actions';
+import {
+    googleDriveFetchFolderInfo,
+    googleDriveUploadFile,
+} from '../../googleDrive/actions';
+import { getStoredDefaultFolderId } from '../../googleDrive/utils';
 import { useSelector } from '../../reducers';
 import { googleDriveUploadDialogDidCancel } from './actions';
 import { useI18n } from './i18n';
@@ -40,6 +45,17 @@ const GoogleDriveUploadDialog: React.FunctionComponent = () => {
 
     const [uploadStarted, setUploadStarted] = useState(false);
     const openFolderPicker = FolderPicker();
+
+    // Automatically load the default folder when dialog opens
+    useEffect(() => {
+        if (isOpen && !destFolder.folder) {
+            const defaultFolderId = getStoredDefaultFolderId();
+            if (defaultFolderId) {
+                // Fetch folder info and set it as the destination
+                dispatch(googleDriveFetchFolderInfo(defaultFolderId));
+            }
+        }
+    }, [isOpen, destFolder.folder, dispatch]);
 
     const handleOpenPicker = () => {
         openFolderPicker();

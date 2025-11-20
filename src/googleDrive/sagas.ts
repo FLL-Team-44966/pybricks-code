@@ -12,6 +12,7 @@ import { pythonFileMimeType } from '../pybricksMicropython/lib';
 import { defined, ensureError } from '../utils';
 import {
     googleDriveDidDownloadFile,
+    googleDriveDidFetchFolderInfo,
     googleDriveDidListFolderFiles,
     googleDriveDidSelectDownloadFiles,
     googleDriveDidUploadFile,
@@ -19,6 +20,7 @@ import {
     googleDriveFailToDownloadFile,
     googleDriveFailToListFolderFiles,
     googleDriveFailToUploadFile,
+    googleDriveFetchFolderInfo,
     googleDriveListFolderFiles,
     googleDriveUploadFile,
 } from './actions';
@@ -243,8 +245,64 @@ function* handleListFolderFiles(
     }
 }
 
+function* handleFetchFolderInfo(
+    action: ReturnType<typeof googleDriveFetchFolderInfo>,
+): Generator {
+    try {
+        // Fetch folder metadata from Google Drive API
+        const url = `https://www.googleapis.com/drive/v3/files/${action.folderId}?fields=id,name,mimeType,modifiedTime,url`;
+        const fetchFolderInfo = fetch(url, {
+            headers: {
+                Authorization: 'Bearer ' + getStoredOauthToken(),
+            },
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(`Fetch error: ${response.status}`);
+            })
+            .then((folderData: {
+                id: string;
+                name: string;
+                mimeType?: string;
+                modifiedTime?: string;
+                url?: string;
+            }) => {
+                // Convert to DriveDocument format
+                return {
+                    description: '',
+                    driveSuccess: true,
+                    embedUrl: '',
+                    iconUrl: '',
+                    id: folderData.id,
+                    isShared: false,
+                    lastEditedUtc: folderData.modifiedTime
+                        ? new Date(folderData.modifiedTime).getTime()
+                        : Date.now(),
+                    mimeType:
+                        folderData.mimeType || 'application/vnd.google-apps.folder',
+                    name: folderData.name,
+                    rotation: 0,
+                    rotationDegree: 0,
+                    serviceId: 'drive',
+                    sizeBytes: 0,
+                    type: 'folder',
+                    url: folderData.url || '',
+                } as DriveDocument;
+            });
+
+        const folder = yield* call(() => fetchFolderInfo);
+        yield* put(googleDriveDidFetchFolderInfo(folder));
+    } catch (err) {
+        console.log('Failed to fetch folder info:', err);
+        // Silently fail - user can still select folder manually
+    }
+}
+
 export default function* (): Generator {
     yield* takeEvery(googleDriveDownloadFile, handleDownloadFile);
     yield* takeEvery(googleDriveUploadFile, handleUploadFile);
     yield* takeEvery(googleDriveListFolderFiles, handleListFolderFiles);
+    yield* takeEvery(googleDriveFetchFolderInfo, handleFetchFolderInfo);
 }

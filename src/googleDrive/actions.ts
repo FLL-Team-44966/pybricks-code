@@ -77,3 +77,13 @@ export const googleDriveFailToListFolderFiles = createAction((err: Error) => ({
     type: 'googleDrive.action.failToListFolderFiles',
     err,
 }));
+
+export const googleDriveFetchFolderInfo = createAction((folderId: string) => ({
+    type: 'googleDrive.action.fetchFolderInfo',
+    folderId,
+}));
+
+export const googleDriveDidFetchFolderInfo = createAction((folder: DriveDocument) => ({
+    type: 'googleDrive.action.didFetchFolderInfo',
+    folder,
+}));

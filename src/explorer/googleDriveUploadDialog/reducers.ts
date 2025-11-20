@@ -3,6 +3,7 @@
 
 import { Reducer, combineReducers } from 'redux';
 import {
+    googleDriveDidFetchFolderInfo,
     googleDriveDidSelectFolder,
     googleDriveDidUploadFile,
     googleDriveFailToUploadFile,
@@ -42,6 +43,9 @@ const fileName: Reducer<string> = (state = initialDialogFileName, action) => {
 
 const descFolder: Reducer<PickedFolder> = (state = {}, action) => {
     if (googleDriveDidSelectFolder.matches(action)) {
+        return { folder: action.folder };
+    }
+    if (googleDriveDidFetchFolderInfo.matches(action)) {
         return { folder: action.folder };
     }
     return state;

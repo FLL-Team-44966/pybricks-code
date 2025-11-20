@@ -12,7 +12,7 @@ import {
     googleDriveDidSelectFolder,
     googleDriveListFolderFiles,
 } from './actions';
-import { openNativeGooglePicker } from './nativePicker';
+import { openNativeFolderPicker, openNativeGooglePicker } from './nativePicker';
 import { DriveDocument, PickerResponse } from './protocol';
 import {
     getStoredDefaultFolderId,
@@ -130,31 +130,41 @@ export function FolderPicker() {
     const dispatch = useDispatch();
 
     const openFolderPicker = () => {
+        const authToken = getStoredOauthToken();
         const defaultFolderId = getStoredDefaultFolderId();
-        const pickerConfig: PickerConfiguration = {
-            clientId: googleClientId,
-            developerKey: googleApiKey,
-            viewId: 'FOLDERS',
-            token: getStoredOauthToken(),
-            customScopes: ['https://www.googleapis.com/auth/drive'],
-            setSelectFolderEnabled: true,
-            supportDrives: true,
-            callbackFunction: (data: PickerResponse) => {
-                if (data.action === 'picked' && data.docs) {
-                    const selectedFolder = data.docs[0];
-                    // Save the selected folder as the default for next time
-                    saveDefaultFolderId(selectedFolder.id);
-                    dispatch(googleDriveDidSelectFolder(selectedFolder));
-                }
-            },
+
+        // Use native Google Picker API for better navigation
+        const handlePickerCallback = (data: PickerResponse) => {
+            if (data.action === 'picked' && data.docs) {
+                const selectedFolder = data.docs[0];
+                // Save the selected folder as the default for next time
+                saveDefaultFolderId(selectedFolder.id);
+                dispatch(googleDriveDidSelectFolder(selectedFolder));
+            }
         };
 
-        // Set default folder if one is stored
-        if (defaultFolderId) {
-            pickerConfig.setParentFolder = defaultFolderId;
-        }
+        if (authToken) {
+            // Use native picker with folder view
+            openNativeFolderPicker(handlePickerCallback, defaultFolderId);
+        } else {
+            // Fallback to wrapper if no auth token
+            const pickerConfig: PickerConfiguration = {
+                clientId: googleClientId,
+                developerKey: googleApiKey,
+                viewId: 'FOLDERS',
+                token: authToken,
+                customScopes: ['https://www.googleapis.com/auth/drive'],
+                setSelectFolderEnabled: true,
+                supportDrives: true,
+                callbackFunction: handlePickerCallback,
+            };
 
-        openPicker(pickerConfig);
+            if (defaultFolderId) {
+                pickerConfig.setParentFolder = defaultFolderId;
+            }
+
+            openPicker(pickerConfig);
+        }
     };
 
     useEffect(() => {

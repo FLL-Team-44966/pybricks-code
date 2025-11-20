@@ -172,3 +172,51 @@ export function openNativeGooglePicker(callback: (data: PickerResponse) => void)
             // Fallback: could show an error message to the user
         });
 }
+
+/**
+ * Opens the native Google Picker for folder selection only.
+ */
+export function openNativeFolderPicker(
+    callback: (data: PickerResponse) => void,
+    defaultFolderId?: string,
+): void {
+    loadGooglePickerAPI()
+        .then(() => {
+            const token = getStoredOauthToken();
+
+            if (!window.google?.picker) {
+                throw new Error('Google Picker API not available');
+            }
+
+            const pickerApi = window.google.picker;
+            if (!pickerApi) {
+                throw new Error('Google Picker API not available');
+            }
+
+            const { PickerBuilder, ViewId, DocsView } = pickerApi;
+
+            // Create folder-only view
+            const folderView = new DocsView(ViewId.DOCS)
+                .setIncludeFolders(true)
+                .setSelectFolderEnabled(true);
+            if (defaultFolderId) {
+                folderView.setParent(defaultFolderId);
+            }
+
+            // Build the picker
+            const picker = new PickerBuilder()
+                .addView(folderView)
+                .setOAuthToken(token)
+                .setDeveloperKey(googleApiKey)
+                .setCallback(callback)
+                .setOrigin(window.location.origin)
+                .setSize(1200, 635)
+                .build();
+
+            picker.setVisible(true);
+        })
+        .catch((err) => {
+            console.error('Failed to open Google Folder Picker:', err);
+            // Fallback: could show an error message to the user
+        });
+}
