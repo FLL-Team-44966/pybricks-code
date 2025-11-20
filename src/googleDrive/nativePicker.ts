@@ -38,7 +38,7 @@ interface PickerBuilder {
     setDeveloperKey: (key: string) => PickerBuilder;
     setCallback: (callback: (data: PickerResponse) => void) => PickerBuilder;
     setOrigin: (origin: string) => PickerBuilder;
-    enableFeature: (feature: string) => PickerBuilder;
+    setMultiSelect: (enabled: boolean) => PickerBuilder;
     setSize: (width: number, height: number) => PickerBuilder;
     build: () => Picker;
 }
@@ -158,7 +158,7 @@ export function openNativeGooglePicker(callback: (data: PickerResponse) => void)
                 .setDeveloperKey(googleApiKey)
                 .setCallback(callback)
                 .setOrigin(window.location.origin)
-                .enableFeature('MULTISELECT_ENABLED')
+                .setMultiSelect(true)
                 .setSize(1200, 635)
                 .build();
 

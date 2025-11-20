@@ -171,7 +171,7 @@ function* handleListFolderFiles(
         const query = `trashed=false and '${action.folderId}' in parents`;
         const params = new URLSearchParams({
             q: query,
-            fields: 'files(id,name,mimeType,sizeBytes,modifiedTime)',
+            fields: 'files(id,name,mimeType,size,modifiedTime)',
         });
         const url = `https://www.googleapis.com/drive/v3/files?${params.toString()}`;
 
@@ -228,7 +228,7 @@ function* handleListFolderFiles(
                 rotation: 0,
                 rotationDegree: 0,
                 serviceId: 'drive',
-                sizeBytes: parseInt(file.sizeBytes || '0', 10),
+                sizeBytes: parseInt(file.size || '0', 10),
                 type: 'document',
                 url: '',
             }),

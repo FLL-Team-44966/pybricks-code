@@ -32,7 +32,7 @@ export interface DriveApiFile {
     id: string;
     name: string;
     mimeType: string;
-    sizeBytes?: string;
+    size?: string; // Google Drive API v3 uses 'size' not 'sizeBytes'
     modifiedTime?: string;
 }
 
