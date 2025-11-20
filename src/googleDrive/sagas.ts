@@ -262,35 +262,37 @@ function* handleFetchFolderInfo(
                 }
                 throw new Error(`Fetch error: ${response.status}`);
             })
-            .then((folderData: {
-                id: string;
-                name: string;
-                mimeType?: string;
-                modifiedTime?: string;
-                url?: string;
-            }) => {
-                // Convert to DriveDocument format
-                return {
-                    description: '',
-                    driveSuccess: true,
-                    embedUrl: '',
-                    iconUrl: '',
-                    id: folderData.id,
-                    isShared: false,
-                    lastEditedUtc: folderData.modifiedTime
-                        ? new Date(folderData.modifiedTime).getTime()
-                        : Date.now(),
-                    mimeType:
-                        folderData.mimeType || 'application/vnd.google-apps.folder',
-                    name: folderData.name,
-                    rotation: 0,
-                    rotationDegree: 0,
-                    serviceId: 'drive',
-                    sizeBytes: 0,
-                    type: 'folder',
-                    url: folderData.url || '',
-                } as DriveDocument;
-            });
+            .then(
+                (folderData: {
+                    id: string;
+                    name: string;
+                    mimeType?: string;
+                    modifiedTime?: string;
+                    url?: string;
+                }) => {
+                    // Convert to DriveDocument format
+                    return {
+                        description: '',
+                        driveSuccess: true,
+                        embedUrl: '',
+                        iconUrl: '',
+                        id: folderData.id,
+                        isShared: false,
+                        lastEditedUtc: folderData.modifiedTime
+                            ? new Date(folderData.modifiedTime).getTime()
+                            : Date.now(),
+                        mimeType:
+                            folderData.mimeType || 'application/vnd.google-apps.folder',
+                        name: folderData.name,
+                        rotation: 0,
+                        rotationDegree: 0,
+                        serviceId: 'drive',
+                        sizeBytes: 0,
+                        type: 'folder',
+                        url: folderData.url || '',
+                    } as DriveDocument;
+                },
+            );
 
         const folder = yield* call(() => fetchFolderInfo);
         yield* put(googleDriveDidFetchFolderInfo(folder));
