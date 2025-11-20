@@ -11,7 +11,12 @@ import {
     googleDriveDidSelectFolder,
 } from './actions';
 import { DriveDocument, PickerResponse } from './protocol';
-import { getStoredOauthToken, saveOauthToken } from './utils';
+import {
+    getStoredOauthToken,
+    saveOauthToken,
+    getStoredDefaultFolderId,
+    saveDefaultFolderId,
+} from './utils';
 
 export default function DownloadPicker() {
     const [pickedDocs, setPickedDocs] = useState<DriveDocument[]>([]);
@@ -27,7 +32,8 @@ export default function DownloadPicker() {
             sessionStorage.getItem('google_oauth_token'),
         );
         const authToken = getStoredOauthToken();
-        openPicker({
+        const defaultFolderId = getStoredDefaultFolderId();
+        const pickerConfig: any = {
             clientId: googleClientId,
             developerKey: googleApiKey,
             viewId: 'DOCS',
@@ -50,6 +56,14 @@ export default function DownloadPicker() {
                             doc.mimeType === '', // Include files where MIME type couldn't be determined
                     );
 
+                    // Save the folder ID if a folder was selected
+                    const selectedFolder = filteredDocs.find(
+                        (doc) => doc.mimeType === 'application/vnd.google-apps.folder',
+                    );
+                    if (selectedFolder) {
+                        saveDefaultFolderId(selectedFolder.id);
+                    }
+
                     if (filteredDocs.length > 0) {
                         if (authToken) {
                             dispatch(googleDriveDidSelectDownloadFiles(filteredDocs));
@@ -63,7 +77,14 @@ export default function DownloadPicker() {
                     console.log('dialog cancelled, nothing happens.');
                 }
             },
-        });
+        };
+
+        // Set default folder if one is stored
+        if (defaultFolderId) {
+            pickerConfig.setParentFolder = defaultFolderId;
+        }
+
+        openPicker(pickerConfig);
     };
 
     // When auth token is not available, need to wait for the auth token to be available until dispatching DidSelectDownloadFiles
@@ -83,7 +104,8 @@ export function FolderPicker() {
     const dispatch = useDispatch();
 
     const openFolderPicker = () => {
-        openPicker({
+        const defaultFolderId = getStoredDefaultFolderId();
+        const pickerConfig: any = {
             clientId: googleClientId,
             developerKey: googleApiKey,
             viewId: 'FOLDERS',
@@ -93,10 +115,20 @@ export function FolderPicker() {
             supportDrives: true,
             callbackFunction: (data: PickerResponse) => {
                 if (data.action === 'picked' && data.docs) {
-                    dispatch(googleDriveDidSelectFolder(data.docs[0]));
+                    const selectedFolder = data.docs[0];
+                    // Save the selected folder as the default for next time
+                    saveDefaultFolderId(selectedFolder.id);
+                    dispatch(googleDriveDidSelectFolder(selectedFolder));
                 }
             },
-        });
+        };
+
+        // Set default folder if one is stored
+        if (defaultFolderId) {
+            pickerConfig.setParentFolder = defaultFolderId;
+        }
+
+        openPicker(pickerConfig);
     };
 
     useEffect(() => {

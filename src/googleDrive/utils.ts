@@ -3,6 +3,7 @@
 
 const googleOauthTokenExpirationStorageKey = 'google_oauth_token_expiration';
 const googleOauthTokenStorageKey = 'google_oauth_token';
+const googleDriveDefaultFolderIdStorageKey = 'google_drive_default_folder_id';
 
 export function getStoredOauthToken(): string {
     const tokenExpiration = sessionStorage.getItem(
@@ -21,4 +22,12 @@ export function saveOauthToken(authToken: string, expireIn: number) {
         googleOauthTokenExpirationStorageKey,
         (1000 * expireIn + Date.now()).toString(),
     );
+}
+
+export function getStoredDefaultFolderId(): string {
+    return localStorage.getItem(googleDriveDefaultFolderIdStorageKey) || '';
+}
+
+export function saveDefaultFolderId(folderId: string) {
+    localStorage.setItem(googleDriveDefaultFolderIdStorageKey, folderId);
 }
