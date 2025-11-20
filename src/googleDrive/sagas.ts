@@ -167,13 +167,14 @@ function* handleListFolderFiles(
 ): Generator {
     try {
         // List all files in the folder (non-recursively, only direct children)
-        // Exclude folders by filtering for files only
-        const url =
-            'https://www.googleapis.com/drive/v3/files?q=' +
-            encodeURIComponent(
-                `trashed=false and '${action.folderId}' in parents and mimeType!='application/vnd.google-apps.folder'`,
-            ) +
-            '&fields=files(id,name,mimeType,sizeBytes,modifiedTime)';
+        // Query syntax: list all non-trashed files in the folder, then filter client-side
+        const query = `trashed=false and '${action.folderId}' in parents`;
+        const params = new URLSearchParams({
+            q: query,
+            fields: 'files(id,name,mimeType,sizeBytes,modifiedTime)',
+        });
+        const url = `https://www.googleapis.com/drive/v3/files?${params.toString()}`;
+
         const fetchFolderFiles = fetch(url, {
             headers: {
                 Authorization: 'Bearer ' + getStoredOauthToken(),
@@ -183,15 +184,21 @@ function* handleListFolderFiles(
                 if (response.ok) {
                     return response.json();
                 }
-                throw new Error(`Fetch error: ${response.status}`);
+                // Get more details about the error
+                return response.text().then((text) => {
+                    throw new Error(`Fetch error: ${response.status} - ${text}`);
+                });
             })
             .then((listFileResponse: { files: DriveApiFile[] }) => {
-                // Filter to only include Python files: .py extension or correct MIME type
+                // Filter to exclude folders and only include Python files
                 return listFileResponse.files.filter(
                     (file) =>
-                        file.name.endsWith('.py') ||
-                        file.mimeType === pythonFileMimeType ||
-                        file.mimeType === '', // Include files where MIME type couldn't be determined
+                        // Exclude folders
+                        file.mimeType !== 'application/vnd.google-apps.folder' &&
+                        // Include Python files: .py extension or correct MIME type
+                        (file.name.endsWith('.py') ||
+                            file.mimeType === pythonFileMimeType ||
+                            file.mimeType === ''), // Include files where MIME type couldn't be determined
                 );
             });
 
