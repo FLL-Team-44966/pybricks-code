@@ -27,6 +27,15 @@ export interface ListFileResponse {
     files: DriveDocument[];
 }
 
+/** File metadata returned from Google Drive API v3. */
+export interface DriveApiFile {
+    id: string;
+    name: string;
+    mimeType: string;
+    sizeBytes?: string;
+    modifiedTime?: string;
+}
+
 /** Response from Google Picker API. */
 export interface PickerResponse {
     action: string;

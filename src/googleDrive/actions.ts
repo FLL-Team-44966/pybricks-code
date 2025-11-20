@@ -62,3 +62,18 @@ export const googleDriveFailToDownloadFile = createAction((file: DriveDocument) 
     type: 'googleDrive.action.failToDownloadFile',
     file,
 }));
+
+export const googleDriveListFolderFiles = createAction((folderId: string) => ({
+    type: 'googleDrive.action.listFolderFiles',
+    folderId,
+}));
+
+export const googleDriveDidListFolderFiles = createAction((files: DriveDocument[]) => ({
+    type: 'googleDrive.action.didListFolderFiles',
+    files,
+}));
+
+export const googleDriveFailToListFolderFiles = createAction((err: Error) => ({
+    type: 'googleDrive.action.failToListFolderFiles',
+    err,
+}));
