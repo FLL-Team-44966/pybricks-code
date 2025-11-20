@@ -2,6 +2,7 @@
 // Copyright (c) 2024 The Pybricks Authors
 
 import GoogleDrivePicker from 'google-drive-picker';
+import type { PickerConfiguration } from 'google-drive-picker/dist/typeDefs';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { googleApiKey, googleClientId } from '../app/constants';
@@ -12,10 +13,10 @@ import {
 } from './actions';
 import { DriveDocument, PickerResponse } from './protocol';
 import {
-    getStoredOauthToken,
-    saveOauthToken,
     getStoredDefaultFolderId,
+    getStoredOauthToken,
     saveDefaultFolderId,
+    saveOauthToken,
 } from './utils';
 
 export default function DownloadPicker() {
@@ -33,7 +34,7 @@ export default function DownloadPicker() {
         );
         const authToken = getStoredOauthToken();
         const defaultFolderId = getStoredDefaultFolderId();
-        const pickerConfig: any = {
+        const pickerConfig: PickerConfiguration = {
             clientId: googleClientId,
             developerKey: googleApiKey,
             viewId: 'DOCS',
@@ -105,7 +106,7 @@ export function FolderPicker() {
 
     const openFolderPicker = () => {
         const defaultFolderId = getStoredDefaultFolderId();
-        const pickerConfig: any = {
+        const pickerConfig: PickerConfiguration = {
             clientId: googleClientId,
             developerKey: googleApiKey,
             viewId: 'FOLDERS',
